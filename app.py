@@ -15,15 +15,12 @@ def create_app():
     db.init_app(app)
     
     # models importadas
+    from models.Password import Password
+    from models.Media import Media  
     from models.User import User
     from models.Service import Service
-    from models.Password import Password
-    from models.Media import Media
-    from models.User_Auth import User_Auth
-    
 
     Migrate(app, db)
-    
     print('connectou')
     return app
 
