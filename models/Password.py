@@ -7,6 +7,6 @@ class Password(db.Model):
     value = db.Column(db.String(255), nullable=False)
     category = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(255), nullable=False)
-    user_email = db.Column(db.String(50), db.ForeignKey("Users.email"), nullable=False)
+    user_email = db.Column(db.String(100), db.ForeignKey("Users.email"), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now())
