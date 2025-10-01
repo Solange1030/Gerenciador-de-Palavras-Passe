@@ -4,7 +4,8 @@ from controllers.PasswordController import create_password
 
 user_api = Blueprint("user_api", __name__)
 
-@user_api.route("/user", methods=["POST"])
+
+@user_api.route("/user", methods=["GET"])
 def add_user():
     data = request.json
     create_user(data["name"], data["email"], data["password"])
