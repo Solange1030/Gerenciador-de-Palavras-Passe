@@ -27,6 +27,16 @@ def create_app():
     from models.User import User
     from models.Service import Service
 
+    from routes.user import user_bp
+    from routes.password import password_bp
+    from routes.auth import auth_bp
+    from routes.main import main_bp
+
+    app.register_blueprint(user_bp)
+    app.register_blueprint(password_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(main_bp)
+
     Migrate(app, db)
     print('connectou')
     return app

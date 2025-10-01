@@ -1,6 +1,6 @@
 from app import db, create_app
 from controllers.PasswordController import create_password
-from controllers.UserController import create_user
+from controllers.user_controller import create_user
 
 app = create_app()
 with app.app_context():

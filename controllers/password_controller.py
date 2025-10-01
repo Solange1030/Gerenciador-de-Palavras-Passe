@@ -1,6 +1,6 @@
 from app import db
 from models.Password import Password
-from controllers.ServiceController import create_service
+from controllers.service_controller import create_service
 from models.Service import Service
 from models.User import User
 from werkzeug.security import generate_password_hash, check_password_hash

@@ -1,27 +1,23 @@
 from flask import Blueprint, jsonify, request
-from controllers.UserController import create_user, authenticate_user
-from controllers.PasswordController import create_password
 
-user_api = Blueprint("user_api", __name__)
+user_bp = Blueprint("user", __name__, url_prefix="/users")
 
+@user_bp.route("/", methods=["GET"])
+def get_users():
+    return "Hello world"
 
-@user_api.route("/user", methods=["GET"])
+@user_bp.route("/me", methods=["GET"])   #important
+def get_user():
+    return "Hello world"
+
+@user_bp.route("/", methods=["POST"])   #important
 def add_user():
-    data = request.json
-    create_user(data["name"], data["email"], data["password"])
-    return jsonify({"message:", "Dados registados"})
+    return "Hello world"
 
-@user_api.route("/login", methods=["POST"])
-def login_auth():
-    data = request.json
-    user = authenticate_user(data["email"], data["password"])
-    return jsonify()
+@user_bp.route("/", methods=["PATCH"])  #important
+def update_user():
+    return "Hello world"
 
-@user_api.route("/password", methods = ["POST"])
-def add_pass():
-    data = request.json
-    create_password(data["value"], data["category"], data["description"], data["designation"], data["url"], data["user_email"])
-    return jsonify({"message:", "Palavra-Passe registada"})
-
-# @user_api.route("/home", methods=["POST"])
-# def 
+@user_bp.route("/", methods=["DELETE"])
+def delete_user():
+    return "Hello world"
