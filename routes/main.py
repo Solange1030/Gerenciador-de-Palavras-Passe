@@ -4,4 +4,4 @@ main_bp = Blueprint("main", __name__, url_prefix="/")
 
 @main_bp.route("", methods=["GET"])
 def index():
-    return jsonify({"message": "Welcome 3S - Password manager"})
+    return jsonify({"message": "Welcome to 3S - Password manager"})
