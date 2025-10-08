@@ -11,12 +11,15 @@ def sign_up():
 
 @auth_bp.route("/signin", methods=["POST"])   #important
 def sign_in():
-    return "Hello world"
+    data = request.get_json()
+    return auth_controller.sign_in(data)
 
 @auth_bp.route("/check_otp", methods=["POST"])   #important
 def check_otp():
-    return "Hello world"
+    otp = request.get_json()
+    return auth_controller.otp_varificate(otp)
 
 @auth_bp.route("/signout", methods=["POST"])   #important
 def sign_out():
     return "Hello world"
+

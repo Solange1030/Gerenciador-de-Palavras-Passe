@@ -18,6 +18,8 @@ def create_app():
 
     app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+mysqlconnector://{db_user}{':' + db_password if db_password else ''}@{db_host}/{db_name}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    UPLOAD_FOLDER = os.path.join('static', 'uploads')
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     db.init_app(app)
     
     # models importadas
