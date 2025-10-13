@@ -20,12 +20,12 @@ def check_secret_key():
 
 @password_bp.route("/add_pass", methods=["POST"])   #important
 def add_password():
-    data = request.form.to_dict()          # pega os campos de texto
+    data = request.form.to_dict()         
     file = request.files.get("image") 
     return password_controller.create_password(data, file)
 
 
-@password_bp.route("/", methods=["PATCH"])  #important
+@password_bp.route("/", methods=["PATCH"]) 
 def update_password():
     return "Hello world"
 
