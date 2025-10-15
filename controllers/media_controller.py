@@ -1,5 +1,6 @@
 from PIL import Image
-from extensions import db, jsonify
+from extensions import db
+from flask import jsonify
 from models.Media import Media
 from models import Password
 from utils import utils
