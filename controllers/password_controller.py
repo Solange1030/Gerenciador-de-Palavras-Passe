@@ -1,4 +1,4 @@
-from app import db
+from extensions import db
 from flask import jsonify
 from controllers.service_controller import create_service
 from models import Service, User, Password, Media

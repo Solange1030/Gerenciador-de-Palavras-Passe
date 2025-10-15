@@ -1,4 +1,4 @@
-from app import db
+from extensions import db
 
 class Media(db.Model):
     __tablename__ = "media"

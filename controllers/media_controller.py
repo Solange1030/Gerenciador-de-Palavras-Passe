@@ -1,5 +1,5 @@
 from PIL import Image
-from app import db, jsonify
+from extensions import db, jsonify
 from models.Media import Media
 from models import Password
 from utils import utils

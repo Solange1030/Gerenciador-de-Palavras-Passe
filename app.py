@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
+from extensions import db
 import os
 
 
@@ -13,7 +14,6 @@ db_password = os.getenv("DB_PASSWORD")
 db_port = os.getenv("DB_PORT")
 db_name = os.getenv("DB_NAME")
 
-db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__) 

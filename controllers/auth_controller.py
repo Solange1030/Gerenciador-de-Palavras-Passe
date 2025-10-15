@@ -1,4 +1,4 @@
-from app import db
+from extensions import db
 from flask import jsonify, redirect, url_for
 from models import User
 from utils import utils, crypto
