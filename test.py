@@ -1,4 +1,4 @@
-from app import db, create_app
+from app import  create_app
 from controllers.password_controller import create_password
 from controllers.auth_controller import sign_up
 
