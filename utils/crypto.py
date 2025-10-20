@@ -1,19 +1,24 @@
 import os
 from cryptography.fernet import Fernet
+from dotenv import load_dotenv
 
-# Caminho absoluto do arquivo de chave
-KEY_PATH = os.path.join(os.path.dirname(__file__), "../config/secret.key")
+load_dotenv()
 
-# Lê a chave existente
-with open(KEY_PATH, "rb") as f:
-    key = f.read()
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-fernet = Fernet(key)
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY não encontrada! Define-a no .env ou nas variáveis do Render.")
+
+
+if isinstance(SECRET_KEY, str):
+    SECRET_KEY = SECRET_KEY.encode()
+
+fernet = Fernet(SECRET_KEY)
 
 def encrypt_value(value: str) -> bytes:
-    
+   
     return fernet.encrypt(value.encode())
 
 def decrypt_value(token: bytes) -> str:
-    print("teste")
+
     return fernet.decrypt(token).decode()
