@@ -45,7 +45,8 @@ def sign_in(data):
     if user:
         user.otp_code = utils.gen_otp()
         db.session.commit()
-        return jsonify({"message": "OTP gerado, ", "otp": user.otp_code, "redirect_to": "/auth/check_otp"})
+        #jsonify({"message": "OTP gerado, ", "otp": user.otp_code})
+        return jsonify({"message": "OTP gerado, ", "otp": user.otp_code})
     else:
         return jsonify({"message": "Email nao achado "})   
 
@@ -56,7 +57,7 @@ def otp_varificate(otp_data):
     if user:
         user.otp_code = ""
         token = token_utils.generate_token(user)
-        resp = make_response(redirect(url_for("main")))
+        resp = make_response(redirect(url_for("main.dashboard")))
         resp.set_cookie('token', token, httponly=True, samesite='Strict', max_age=7200)
         return resp
     else:
