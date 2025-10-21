@@ -3,6 +3,7 @@ from controllers import password_controller
 
 password_bp = Blueprint("password", __name__, url_prefix="/passwords")
 
+
 @password_bp.route("/", methods=["GET"])
 def fetch_all():
     return "Hello world"

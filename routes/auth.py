@@ -20,7 +20,7 @@ def sign_in():
 #     data = request.get_json()
 #     return auth_controller.sign_in(data)
 
-@token_required
+
 @auth_bp.route("/check_otp", methods=["POST"])   #important
 def check_otp(current_user):
     otp = request.get_json()
