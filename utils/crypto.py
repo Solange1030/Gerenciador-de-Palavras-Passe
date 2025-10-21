@@ -4,16 +4,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+FLASK_KEY = os.getenv("FLASK_KEY")
 
-if not SECRET_KEY:
+if not FLASK_KEY:
     raise ValueError("SECRET_KEY não encontrada! Define-a no .env ou nas variáveis do Render.")
 
 
-if isinstance(SECRET_KEY, str):
-    SECRET_KEY = SECRET_KEY.encode()
+if isinstance(FLASK_KEY, str):
+    FLASK_KEY = FLASK_KEY.encode()
 
-fernet = Fernet(SECRET_KEY)
+fernet = Fernet(FLASK_KEY)
 
 def encrypt_value(value: str) -> bytes:
    

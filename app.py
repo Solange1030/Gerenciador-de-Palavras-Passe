@@ -21,6 +21,7 @@ def create_app():
     UPLOAD_FOLDER = os.path.join('static', 'uploads')
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+    app.config['FLASK_KEY'] = os.getenv("FLASK_KEY")
 
     db.init_app(app)
     Migrate(app, db)
