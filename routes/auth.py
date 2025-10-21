@@ -22,7 +22,7 @@ def sign_in():
 
 
 @auth_bp.route("/check_otp", methods=["POST"])   #important
-def check_otp(current_user):
+def check_otp():
     otp = request.get_json()
     
     return auth_controller.otp_varificate(otp)
