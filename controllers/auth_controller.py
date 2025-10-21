@@ -53,7 +53,7 @@ def sign_in(data):
 def otp_varificate(otp_data):
 
     otp_required = otp_data.get("otp")
-    user = User.query.filter_by( password_master = otp_required).first()
+    user = User.query.filter_by( otp_code = otp_required).first()
     if user:
         user.otp_code = ""
         token = token_utils.generate_token(user)
