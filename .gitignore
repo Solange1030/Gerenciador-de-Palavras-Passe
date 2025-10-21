@@ -6,3 +6,4 @@ instance/
 *.db
 venv/
 /config/secret.key
+/static/uploads
