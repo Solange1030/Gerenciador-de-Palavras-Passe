@@ -24,8 +24,8 @@ def sign_in():
 @auth_bp.route("/check_otp", methods=["POST"])   #important
 def check_otp(current_user):
     otp = request.get_json()
-    data_user = current_user
-    return auth_controller.otp_varificate(otp, data_user)
+    
+    return auth_controller.otp_varificate(otp)
 
 @auth_bp.route("/signout", methods=["POST"])   #important
 def sign_out():
