@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_migrate import Migrate
+from flask_cors import CORS  
 import os
 from dotenv import load_dotenv
 from extensions import db
@@ -23,26 +24,30 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
     app.config['FLASK_KEY'] = os.getenv("FLASK_KEY")
 
+   
     db.init_app(app)
     Migrate(app, db)
 
-    # Importa os modelos aqui
+    
+    CORS(app, resources={r"/*": {"origins": "*"}})
+
+    # Importa os modelos
     from models.User import User
     from models.Password import Password
     from models.Media import Media
     from models.Service import Service
 
-    # Importa Blueprints aqui
+    # Importa Blueprints
     from routes.user import user_bp
     from routes.password import password_bp
+    from routes.media import media_bp
     from routes.auth import auth_bp
     from routes.main import main_bp
 
     app.register_blueprint(user_bp)
     app.register_blueprint(password_bp)
+    app.register_blueprint(media_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
-
-    #print("✅ Blueprints registrados com sucesso!")
 
     return app

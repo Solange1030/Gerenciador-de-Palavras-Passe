@@ -66,6 +66,8 @@ def show_password(file_id):
         return jsonify({"message": "Palavra-passe: "+ unencripted_pass})
     
 
+# def list_pass(email):
+#     media_list = Password.query.filter_by(email = email).all()
 
     
 #def checking_secret_key(code_validate):
