@@ -16,17 +16,18 @@ def sign_up (data):
             return jsonify({"error": str(e)}), 400
         
         #secret_key = utils.key_gen()
+        code_otp = utils.gen_otp()
         user = User(
             name = data["name"],
             email = data["email"],
             password_master = crypto.encrypt_value(data["password_master"]),
-            otp_code = ""
+            otp_code = code_otp
 
         )
 
         db.session.add(user)
         db.session.commit()
-        return jsonify({"message": "Bem vinda " + user.name + ". Guarde a sua chave-mestra para acessar a todas as palavras-passe armazenadas"})
+        return jsonify({"message": "Bem vindo/a " + user.name + ". Guarde a sua chave-mestra para acessar a todas as palavras-passe armazenadas. Codigo OTP= " + user.otp_code })
     
     except Exception  as e:
         db.session.rollback()
@@ -45,10 +46,10 @@ def sign_in(data):
     if user:
         user.otp_code = utils.gen_otp()
         db.session.commit()
-        #jsonify({"message": "OTP gerado, ", "otp": user.otp_code})
+        
         return jsonify({"message": "OTP gerado, ", "otp": user.otp_code})
     else:
-        return jsonify({"message": "Email nao achado "})   
+        return jsonify({"message": "Email nao achado "}) , 404  
 
 def otp_varificate(otp_data):
 

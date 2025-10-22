@@ -29,7 +29,14 @@ def create_app():
     Migrate(app, db)
 
     
-    CORS(app, resources={r"/*": {"origins": "*"}})
+    try:
+        
+        CORS(app, resources={r"/*": {"origins": "*"}})
+        print("CORS ativado com sucesso")
+    except Exception as e:
+        print(f"Falha ao activar CORS: {e}")
+    
+    
 
     # Importa os modelos
     from models.User import User
