@@ -66,13 +66,19 @@ def show_password(file_id):
         return jsonify({"message": "Palavra-passe: "+ unencripted_pass})
     
 
-# def list_services(email):
-#     passwords = Password.query.filter_by(email = email).all()
+def list_services(email):
+    
+#     passwords = Password.query.filter_by(user_email = email).all()
 
-#     result[]
+    result=[]
 #     for p in passwords:
 #         service = Service.query.filter_by(id = p.id).first()
-#         service_data = [{"id": m.id, "designation": m.desination, "url": m.url} for m in service]
-#         result.ap
+        
+#         result.append({
+#             "service_id": service.id,
+#             "service_designation": service.designation,
+#             "service_url": service.url
+#         })
+    return result
 #def checking_secret_key(code_validate):
 

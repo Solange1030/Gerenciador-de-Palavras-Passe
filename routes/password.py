@@ -26,11 +26,9 @@ def add_password():
     file = request.files.get("image") 
     return password_controller.create_password(data, file)
 
-@password_bp.route("/list_pass", methods=["GET"])   #important
-def list_password():
-    data = request.form.to_dict()         
-    file = request.files.get("image") 
-    return password_controller.create_password(data, file)
+@password_bp.route("/list_services/<string:email>", methods=["GET"])   #important
+def list_password(email):
+    return password_controller.list_services(email)
 
 
 @password_bp.route("/", methods=["PATCH"]) 

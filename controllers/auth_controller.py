@@ -5,6 +5,7 @@ from utils import utils, crypto
 from email_validator import validate_email, EmailNotValidError
 from utils import token_utils
 
+from extensions import mail
 
 def sign_up (data):
     try:
@@ -27,11 +28,13 @@ def sign_up (data):
 
         db.session.add(user)
         db.session.commit()
-        return jsonify({"message": "Bem vindo/a " + user.name + ". Guarde a sua chave-mestra para acessar a todas as palavras-passe armazenadas. Codigo OTP= " + user.otp_code })
-    
+       
+        mail.send(utils.send_email(user.email, user.name, user.otp_code))
+        return jsonify({"message": "Bem vindo/a " + user.name + ". Guarde a sua chave-mestra para acessar a todas as palavras-passe armazenadas. Codigo enviado para o email" })
+
     except Exception  as e:
         db.session.rollback()
-        raise e
+        return jsonify({"error": f"Falha ao registar: {str(e)}"}), 500
 
 def sign_in(data):
     try:
@@ -46,10 +49,15 @@ def sign_in(data):
     if user:
         user.otp_code = utils.gen_otp()
         db.session.commit()
-        
-        return jsonify({"message": "OTP gerado, ", "otp": user.otp_code})
+       
+        try:
+            mail.send(utils.send_email(user.email, user.name, user.otp_code))
+            return jsonify({"message": "OTP gerado e enviado para o email"}), 200
+        except Exception as e:
+            return jsonify({"error": f"Falha ao enviar o email: {str(e)}"}), 500
     else:
-        return jsonify({"message": "Email nao achado "}) , 404  
+        return jsonify({"message": "Email não encontrado"}), 404 
+
 
 def otp_varificate(otp_data):
 
