@@ -9,24 +9,30 @@ password_bp = Blueprint("password", __name__, url_prefix="/passwords")
 def fetch_all():
     return "Hello world"
 
-@password_bp.route("/<int:media_id>", methods=["GET"])   #important
-def get_password(media_id):
-    return password_controller.show_password(media_id)
+@password_bp.route("/<int:media_id>", methods=["POST"])   #important
+@token_required
+def get_password( email, media_id,):
+    data = request.get_json() or {}
+    code_validate = data.get("secret_key")
+    return password_controller.show_password(media_id, email, data, code_validate)
 
 
-@password_bp.route("/secret_key", methods = ["POST"])
-def check_secret_key():
-    code_validate = request.get_json()
-    return password_controller.checking_secret_key(code_validate)
+# @password_bp.route("/secret_key", methods = ["POST"])
+# @token_required
+# def check_secret_key():
+#     code_validate = request.get_json()
+#     return password_controller.checking_secret_key(code_validate)
 
 
 @password_bp.route("/add_pass", methods=["POST"])   #important
-def add_password():
+@token_required
+def add_password(email):
     data = request.form.to_dict()         
     file = request.files.get("image") 
-    return password_controller.create_password(data, file)
+    return password_controller.create_password(data, file, email)
 
 @password_bp.route("/list_services/<string:email>", methods=["GET"])   #important
+@token_required
 def list_password(email):
     return password_controller.list_services(email)
 

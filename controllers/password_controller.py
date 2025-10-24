@@ -5,9 +5,8 @@ from models import Service, User, Password, Media
 from utils import utils, stegano_utils, crypto
 
 
-def create_password(data, file):
+def create_password(data, file, email):
     service = Service.query.filter_by(designation = data["designation"]).first()
-    email = User.query.filter_by(email = data["email"]).first()
 
     value_encrypted = crypto.encrypt_value(data["value"])
 
@@ -21,7 +20,7 @@ def create_password(data, file):
             value = value_encrypted,
             category = data["category"],
             description = data["description"],
-            user_email = email.email,
+            user_email = email,
             service_id = service.id
         )
 
@@ -49,22 +48,27 @@ def create_password(data, file):
         db.session.rollback()
         raise e
     
-def show_password(file_id):
 
-    media = Media.query.filter_by(id = file_id).first()
+def show_password(file_id, email, data, code_validate):
     
+    if not code_validate:
+        return jsonify({"message": "Chave de acesso obrigatória"}), 400
+
+    if not checking_secret_key(code_validate, email):
+        return jsonify({"message": "Chave de acesso inválida"}), 403
+
+    media = Media.query.filter_by(id=file_id).first()
     if not media:
-        return jsonify({"message": "Not Found"})
-    
-    password = stegano_utils.extrating_password(media.path_file)
+        return jsonify({"message": "Arquivo não encontrado"}), 404
 
-    if password == False:
-        return jsonify({"message": "Palavra-passe nao decifrada"})
-    else:
-        
-        unencripted_pass = crypto.decrypt_value(password)
-        return jsonify({"message": "Palavra-passe: "+ unencripted_pass})
-    
+    password = stegano_utils.extrating_password(media.path_file)
+    if not password:
+        return jsonify({"message": "Palavra-passe não decifrada"}), 400
+
+    decrypted_pass = crypto.decrypt_value(password)
+    return jsonify({"message": f"Palavra-passe: {decrypted_pass}"})
+
+
 
 def list_services(email):
     
@@ -80,5 +84,12 @@ def list_services(email):
 #             "service_url": service.url
 #         })
     return result
-#def checking_secret_key(code_validate):
+
+def checking_secret_key(code_validate, email):
+    user = User.query.filter(
+        (User.password_master == code_validate) & (User.email == email)
+    ).first()
+
+    return user is not None
+    
 

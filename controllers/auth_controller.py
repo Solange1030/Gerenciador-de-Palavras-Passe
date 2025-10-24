@@ -16,7 +16,7 @@ def sign_up (data):
         except EmailNotValidError as e:
             return jsonify({"error": str(e)}), 400
         
-        #secret_key = utils.key_gen()
+        
         code_otp = utils.gen_otp()
         user = User(
             name = data["name"],
@@ -35,6 +35,7 @@ def sign_up (data):
     except Exception  as e:
         db.session.rollback()
         return jsonify({"error": f"Falha ao registar: {str(e)}"}), 500
+
 
 def sign_in(data):
     try:
@@ -60,16 +61,32 @@ def sign_in(data):
 
 
 def otp_varificate(otp_data):
-
     otp_required = otp_data.get("otp")
-    user = User.query.filter_by( otp_code = otp_required).first()
+
+    user = User.query.filter_by(otp_code=otp_required).first()
+
     if user:
+        token = token_utils.generate_token(user)  
+
+        resp = make_response(jsonify({
+            "message": "OTP verificado com sucesso"
+           
+        }))
+        resp.set_cookie(
+            "token", token,
+            httponly=True,
+            samesite="Strict",
+            max_age=7200
+        )
+      
         user.otp_code = ""
-        token = token_utils.generate_token(user)
-        resp = make_response(redirect(url_for("main.index")))
-        resp.set_cookie('token', token, httponly=True, samesite='Strict', max_age=7200)
+        db.session.add(user)
+        db.session.commit()
         return resp
+
     else:
-        return jsonify({"message": "Invalido OTP"}), 401
+        return jsonify({"message": "OTP inválido"}), 401
+
+
 
 

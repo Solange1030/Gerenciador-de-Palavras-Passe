@@ -4,17 +4,21 @@ import os
 from functools import wraps
 from flask import request, jsonify
 from models.User import User
+import jwt
+import datetime
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 def generate_token(user):
     payload = {
-        'user_id': user.id,
-        'email': user.email,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=2)
+        "email": user.email,  
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=2),  
+        "iat": datetime.datetime.utcnow()
     }
-    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+
+    token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
     return token
+
 
 def verify_token(token):
     try:
@@ -26,22 +30,21 @@ def verify_token(token):
         return None
 
 def token_required(f):
-    """Decorador para proteger rotas"""
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = request.cookies.get('token')  # pega token do cookie
-
+        token = request.cookies.get("token")
         if not token:
-            return jsonify({'message': 'Token ausente'}), 401
+            return jsonify({"message": "Token não encontrado"}), 401
 
-        data = verify_token(token)
-        if not data:
-            return jsonify({'message': 'Token inválido ou expirado'}), 401
+        try:
+            data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            email = data["email"] 
+        except jwt.ExpiredSignatureError:
+            return jsonify({"message": "Token expirado"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"message": "Token inválido"}), 401
 
-        current_user = User.query.get(data['user_id'])
-        if not current_user:
-            return jsonify({'message': 'Usuário não encontrado'}), 404
+        
+        return f(email, *args, **kwargs)
 
-        # passa o usuário autenticado para a função protegida
-        return f(current_user, *args, **kwargs)
     return decorated
