@@ -49,7 +49,7 @@ def create_password(data, file, email):
         raise e
     
 
-def show_password(file_id, email, data, code_validate):
+def show_password(service_id, email, code_validate):
     
     if not code_validate:
         return jsonify({"message": "Chave de acesso obrigatória"}), 400
@@ -57,16 +57,28 @@ def show_password(file_id, email, data, code_validate):
     if not checking_secret_key(code_validate, email):
         return jsonify({"message": "Chave de acesso inválida"}), 403
 
-    media = Media.query.filter_by(id=file_id).first()
-    if not media:
-        return jsonify({"message": "Arquivo não encontrado"}), 404
+    password = Password.query.filter((Password.service_id == service_id) & (Password.user_email == email) ).first()
+    service = Service.query.filter_by(id = service_id).first()
+    media = Media.query.filter_by(password_id = password.id).first()
 
-    password = stegano_utils.extrating_password(media.path_file)
+    password_value = crypto.decrypt_value(password.value)
+    if not password:
+        return jsonify({"message": "Palavra-Passe não encontrada"}), 404
+
+    response = [ ]
+    response.append({
+        "password": password_value,
+        "url": service.url,
+        "designation": service.designation,
+        "category": password.category,
+        "description": password.description,
+        "media_path": media.path_file,
+        "email": email
+    })
     if not password:
         return jsonify({"message": "Palavra-passe não decifrada"}), 400
 
-    decrypted_pass = crypto.decrypt_value(password)
-    return jsonify({"message": f"Palavra-passe: {decrypted_pass}"})
+    return response
 
 
 
@@ -86,10 +98,12 @@ def list_services(email):
     return result
 
 def checking_secret_key(code_validate, email):
-    user = User.query.filter(
-        (User.password_master == code_validate) & (User.email == email)
-    ).first()
-
-    return user is not None
+   
+    user = User.query.filter_by(email = email).first()
+    secret_key = crypto.decrypt_value(user.password_master)
+    if secret_key == code_validate:
+        return True
+    else:
+        return False
     
 

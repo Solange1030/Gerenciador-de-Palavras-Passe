@@ -9,12 +9,12 @@ password_bp = Blueprint("password", __name__, url_prefix="/passwords")
 def fetch_all():
     return "Hello world"
 
-@password_bp.route("/<int:media_id>", methods=["POST"])   #important
+@password_bp.route("/<int:service_id>", methods=["POST"])   #important
 @token_required
-def get_password( email, media_id,):
+def get_password( email, service_id,):
     data = request.get_json() or {}
     code_validate = data.get("secret_key")
-    return password_controller.show_password(media_id, email, data, code_validate)
+    return password_controller.show_password(service_id, email,  code_validate)
 
 
 # @password_bp.route("/secret_key", methods = ["POST"])
@@ -30,11 +30,6 @@ def add_password(email):
     data = request.form.to_dict()         
     file = request.files.get("image") 
     return password_controller.create_password(data, file, email)
-
-@password_bp.route("/list_services/<string:email>", methods=["GET"])   #important
-@token_required
-def list_password(email):
-    return password_controller.list_services(email)
 
 
 @password_bp.route("/", methods=["PATCH"]) 
