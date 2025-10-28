@@ -30,11 +30,11 @@ def sign_up (data):
         db.session.commit()
        
         mail.send(utils.send_email(user.email, user.name, user.otp_code))
-        return jsonify({"message": "Bem vindo/a " + user.name + ". Guarde a sua chave-mestra para acessar a todas as palavras-passe armazenadas. Codigo enviado para o email" })
+        return jsonify({"message": "Bem vindo/a " + user.name + ". Guarde a sua chave-mestra para acessar a todas as palavras-passe armazenadas. Codigo enviado para o email" }), 200
 
     except Exception  as e:
         db.session.rollback()
-        return jsonify({"error": f"Falha ao registar: {str(e)}"}), 500
+        return jsonify({"error": f"Falha ao registar: {str(e)}"}), 401
 
 
 def sign_in(data):

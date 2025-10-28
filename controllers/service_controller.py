@@ -1,3 +1,4 @@
+from flask import jsonify
 from extensions import db
 from models.Service import Service
 
@@ -6,7 +7,6 @@ def create_service( designation, url):
         service = Service(designation = designation, url = url)
         db.session.add(service)
         db.session.commit()
-        return service    
+        return service, 200    
     except Exception as e:
-        db.session.rollback()
-        raise e
+        return jsonify({"message": "Palavra-Passe não encontrada"}), 404

@@ -45,8 +45,7 @@ def create_password(data, file, email):
 
         return jsonify({"message": "Registado"}), 200
     except Exception as e:
-        db.session.rollback()
-        raise e
+        return jsonify({"error": f"Falha ao registar: {str(e)}"}), 401
     
 
 def show_password(service_id, email, code_validate):
