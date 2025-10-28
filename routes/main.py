@@ -8,7 +8,7 @@ main_bp = Blueprint("main", __name__, url_prefix="/")
 # def index():
 #     return jsonify({"message": "Welcome to 3s-Threes Password"})
 
-@main_bp.route("/", methods=["GET"])
+@main_bp.route("/dashboard", methods=["GET"])
 @token_required
 def dashboard(email):
    
