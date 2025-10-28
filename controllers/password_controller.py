@@ -6,44 +6,53 @@ from utils import utils, stegano_utils, crypto
 
 
 def create_password(data, file, email):
-    service = Service.query.filter_by(designation = data["designation"]).first()
-
-    value_encrypted = crypto.encrypt_value(data["value"])
-
-    if not email:
-        return jsonify({"message": "Email nao encontrado"}), 404
-    if not service:
-       service = create_service( data["designation"], data["url"])
-    
     try:
+    
+        service = Service.query.filter_by(designation=data["designation"]).first()
+
+        if not service:
+            new_service = create_service(data["designation"], data["url"])
+        
+            if isinstance(new_service, tuple):
+                service = new_service[0]  
+                
+            else:
+                service = new_service
+
+        
+        if not email:
+            return jsonify({"message": "Email não encontrado"}), 404
+
+        value_encrypted = crypto.encrypt_value(data["value"])
+
         password = Password(
-            value = value_encrypted,
-            category = data["category"],
-            description = data["description"],
-            user_email = email,
-            service_id = service.id
+            value=value_encrypted,
+            category=data["category"],
+            description=data["description"],
+            user_email=email,
+            service_id=service.id  
         )
 
         db.session.add(password)
         db.session.commit()
 
         data_file = utils.upload_image(file)
-
         image_path = stegano_utils.embed_pass_in_image(value_encrypted, data_file["path"])
-
         stego_path = stegano_utils.saving_stegno_file(data_file["name"], data_file["upload_folder"], image_path)
 
+
         media = Media(
-            _type_= "Imagem",
-            file_name= data_file["name"],
-            password_id= password.id,
-            path_file= stego_path
+            _type_="Imagem",
+            file_name=data_file["name"],
+            password_id=password.id,
+            path_file=stego_path
         )
 
         db.session.add(media)
         db.session.commit()
 
         return jsonify({"message": "Registado"}), 200
+
     except Exception as e:
         return jsonify({"error": f"Falha ao registar: {str(e)}"}), 400
     
