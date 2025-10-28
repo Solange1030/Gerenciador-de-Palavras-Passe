@@ -7,6 +7,8 @@ def create_service( designation, url):
         service = Service(designation = designation, url = url)
         db.session.add(service)
         db.session.commit()
-        return service, 200    
+        return service
     except Exception as e:
-        return jsonify({"message": "Palavra-Passe não encontrada"}), 404
+        db.session.rollback()
+        print(f"Erro ao criar serviço: {e}")
+        return None
