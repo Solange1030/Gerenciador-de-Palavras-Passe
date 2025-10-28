@@ -10,7 +10,7 @@ def create_media(value_hashed, password_id, img: Image.Image):
 
     password = Password.query.filter_by(id = password_id)
     if not password:
-        raise ValueError("Palavra-passe n\ encontrada")
+        raise ValueError("Palavra-passe \n encontrada")
     
     password_in_bytes = value_hashed.encode("utf-8")
     image = utils.embed_pass_in_image( password_in_bytes, img )

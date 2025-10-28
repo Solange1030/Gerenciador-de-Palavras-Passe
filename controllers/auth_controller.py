@@ -75,7 +75,8 @@ def otp_varificate(otp_data):
         resp.set_cookie(
             "token", token,
             httponly=True,
-            samesite="Strict",
+            secure=False,
+            samesite="Lax",
             max_age=7200
         )
       

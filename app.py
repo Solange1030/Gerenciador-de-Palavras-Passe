@@ -42,7 +42,14 @@ def create_app():
 
     # CORS
     try:
-        CORS(app, resources={r"/*": {"origins": "*"}})
+        CORS(
+            app,
+            supports_credentials=True,      # MUITO IMPORTANTE para cookies
+            origins=["http://localhost:5173"],  # frontend React
+            methods=["GET", "POST", "PUT", "DELETE"],
+            allow_headers=["Content-Type", "Authorization"]
+        )
+        
         print("CORS ativado com sucesso")
     except Exception as e:
         print(f"Falha ao ativar CORS: {e}")
