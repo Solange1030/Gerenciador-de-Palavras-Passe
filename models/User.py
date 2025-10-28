@@ -1,12 +1,13 @@
-from app import db
-from flask import jsonify
+from extensions import db
 
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password_master = db.Column(db.String(255), nullable=True)
+    password_master = db.Column(db.String(100), nullable=False)
+    otp_code = db.Column(db.String(8), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now())
 

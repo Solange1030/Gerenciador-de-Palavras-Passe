@@ -1,4 +1,4 @@
-from app import db
+from extensions import db
 from models.Service import Service
 
 def create_service( designation, url):

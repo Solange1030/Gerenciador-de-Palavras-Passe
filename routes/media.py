@@ -1,8 +1,10 @@
-# from flask import Blueprint
+from flask import Blueprint
+from controllers import media_controller 
 
-# media_bp = Blueprint("media", __name__, url_prefix="/medias")
+# 
+media_bp = Blueprint("media", __name__, url_prefix="/medias")
 
-# @media_bp.route("/", methods=["GET"])
+# @media_bp.route("/<string:email>", methods=["GET"])
 # def fetch_all():
 #     return "Hello world"
 

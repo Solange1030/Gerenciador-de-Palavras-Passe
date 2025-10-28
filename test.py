@@ -1,9 +1,13 @@
-from app import db, create_app
-from controllers.PasswordController import create_password
-from controllers.user_controller import create_user
+from app import  create_app
+from controllers.password_controller import create_password
+from controllers.auth_controller import sign_up
 
 app = create_app()
 with app.app_context():
-    create_password("licha", "pessoal", "hsbdcdbchjcbh", "Google", "https//google.com", "solangemaria@gmail.com")
-    # create_user("Solange Maria", "solangemaria@gmail.com", "Solange")
+    data ={
+        "name" : "Solange Maria",
+        "email" : "solangemaria@gmail.com"
+    }
+    sign_up( data)
     print("Dados registada")
+
