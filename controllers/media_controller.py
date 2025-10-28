@@ -17,7 +17,7 @@ def create_media(value_hashed, password_id, img: Image.Image):
     upload = utils.upload_image_controller(image)
 
     if upload == True:
-        return jsonify({"message": "Imagem armazenada"})
+        return jsonify({"message": "Imagem armazenada"}), 200
     
     try:
         dataMedia = utils.getting_path_filename(image)
@@ -30,7 +30,7 @@ def create_media(value_hashed, password_id, img: Image.Image):
 
         db.session.add(media)
         db.session.commit()
-        return jsonify({"message": "Imagem armazenada"})
+        return jsonify({"message": "Imagem armazenada"}), 200
     except Exception as e:
         db.session.rollback()
         raise e

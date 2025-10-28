@@ -16,4 +16,4 @@ def index(email):
             "user_name": user.name
         })
     
-    return jsonify(result)
+    return jsonify(result), 200

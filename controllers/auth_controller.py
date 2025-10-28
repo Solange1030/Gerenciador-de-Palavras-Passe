@@ -82,7 +82,7 @@ def otp_varificate(otp_data):
         user.otp_code = ""
         db.session.add(user)
         db.session.commit()
-        return resp
+        return resp, 200
 
     else:
         return jsonify({"message": "OTP inválido"}), 401

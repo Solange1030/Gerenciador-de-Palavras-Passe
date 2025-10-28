@@ -11,7 +11,7 @@ def create_password(data, file, email):
     value_encrypted = crypto.encrypt_value(data["value"])
 
     if not email:
-       raise ValueError("Utilizador nao encontrado")
+        return jsonify({"message": "Email nao encontrado"}), 404
     if not service:
        service = create_service( data["designation"], data["url"])
     
@@ -43,7 +43,7 @@ def create_password(data, file, email):
         db.session.add(media)
         db.session.commit()
 
-        return jsonify({"message": "Registado"})
+        return jsonify({"message": "Registado"}), 200
     except Exception as e:
         db.session.rollback()
         raise e
@@ -78,32 +78,36 @@ def show_password(service_id, email, code_validate):
     if not password:
         return jsonify({"message": "Palavra-passe não decifrada"}), 400
 
-    return response
+    return response, 200
 
 
 
-def list_services(email):
+# def patch_password(email, password_id, data):
     
-#     passwords = Password.query.filter_by(user_email = email).all()
+#     password = Password.query.filter_by(id=password_id, user_email=email).first()
 
-    result=[]
-#     for p in passwords:
-#         service = Service.query.filter_by(id = p.id).first()
-        
-#         result.append({
-#             "service_id": service.id,
-#             "service_designation": service.designation,
-#             "service_url": service.url
-#         })
-    return result
+#     if not password:
+#         return jsonify({"message": "Senha não encontrada"}), 404
+
+#     # Atualiza apenas o que foi enviado
+#     if "category" in data:
+#         password.category = data["category"]
+#     if "description" in data:
+#         password.description = data["description"]
+#     if "value" in data:
+#         password.value = crypto.encrypt_value(data["value"])
+
+#     db.session.commit()
+#     return jsonify({"message": "Senha atualizada parcialmente com sucesso"})
+
 
 def checking_secret_key(code_validate, email):
    
     user = User.query.filter_by(email = email).first()
     secret_key = crypto.decrypt_value(user.password_master)
     if secret_key == code_validate:
-        return True
+        return True, 200
     else:
-        return False
+        return False, 400
     
 

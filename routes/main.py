@@ -4,9 +4,12 @@ from controllers import main_controller
 
 main_bp = Blueprint("main", __name__, url_prefix="/")
 
+# @main_bp.route("/", methods=["GET"])
+# def index():
+#     return jsonify({"message": "Welcome to 3s-Threes Password"})
 
-@main_bp.route("/dashboard", methods=["GET"])
+@main_bp.route("/", methods=["GET"])
 @token_required
-def index(email):
+def dashboard(email):
    
     return main_controller.index(email)

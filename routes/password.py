@@ -6,6 +6,7 @@ password_bp = Blueprint("password", __name__, url_prefix="/passwords")
 
 
 @password_bp.route("/", methods=["GET"])
+#@token_required
 def fetch_all():
     return "Hello world"
 
