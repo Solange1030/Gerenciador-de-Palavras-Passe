@@ -30,7 +30,7 @@ def sign_up (data):
         db.session.commit()
        
         mail.send(utils.send_email(user.email, user.name, user.otp_code))
-        return jsonify({"message": "Bem vindo/a " + user.name + ". Guarde a sua chave-mestra para acessar a todas as palavras-passe armazenadas. Codigo enviado para o email" })
+        return jsonify({"message": "Bem vindo/a " + user.name + ". Guarde a sua chave-mestra para acessar a todas as palavras-passe armazenadas. Codigo enviado para o email" }), 200
 
     except Exception  as e:
         db.session.rollback()
@@ -69,7 +69,8 @@ def otp_varificate(otp_data):
         token = token_utils.generate_token(user)  
 
         resp = make_response(jsonify({
-            "message": "OTP verificado com sucesso"
+            "message": "OTP verificado com sucesso",
+            "token": token
         }))
         resp.set_cookie(
             "token", token,

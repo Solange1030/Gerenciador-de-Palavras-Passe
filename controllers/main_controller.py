@@ -8,7 +8,6 @@ def index(email):
     result = []
     for p in pass_data:
         service = Service.query.filter_by(id = p.service_id).first()
-
         result.append({
             "service_id": service.id if service else None,
             "service_name": service.designation if service else None,
