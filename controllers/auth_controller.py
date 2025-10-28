@@ -69,8 +69,8 @@ def otp_varificate(otp_data):
         token = token_utils.generate_token(user)  
 
         resp = make_response(jsonify({
-            "message": "OTP verificado com sucesso"
-           
+            "message": "OTP verificado com sucesso",
+            "token": token
         }))
         resp.set_cookie(
             "token", token,
