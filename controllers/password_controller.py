@@ -45,7 +45,6 @@ def create_password(data, file, email):
 
         return jsonify({"message": "Registado"}), 200
     except Exception as e:
-    
         return jsonify({"error": f"Falha ao registar: {str(e)}"}), 401
     
 

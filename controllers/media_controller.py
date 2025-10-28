@@ -32,8 +32,7 @@ def create_media(value_hashed, password_id, img: Image.Image):
         db.session.commit()
         return jsonify({"message": "Imagem armazenada"}), 200
     except Exception as e:
-        db.session.rollback()
-        raise e
+         return jsonify({"message": "Imagem não armazenada"}), 400
     
 
 
