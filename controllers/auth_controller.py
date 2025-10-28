@@ -34,7 +34,7 @@ def sign_up (data):
 
     except Exception  as e:
         db.session.rollback()
-        return jsonify({"error": f"Falha ao registar: {str(e)}"}), 500
+        return jsonify({"error": f"Falha ao registar: {str(e)}"}), 401
 
 
 def sign_in(data):
@@ -69,8 +69,7 @@ def otp_varificate(otp_data):
         token = token_utils.generate_token(user)  
 
         resp = make_response(jsonify({
-            "message": "OTP verificado com sucesso",
-            "token": token
+            "message": "OTP verificado com sucesso"
         }))
         resp.set_cookie(
             "token", token,
