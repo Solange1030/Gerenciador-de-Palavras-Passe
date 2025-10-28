@@ -7,6 +7,7 @@ from PIL import Image
 import string
 import random
 from flask_mail import Message
+from app.create_app import app
 
 #gerar codigo OTP
 def gen_otp():
@@ -62,4 +63,5 @@ def send_email(email, name, otp_code):
         recipients=[email],
         body=f"Olá {name},\n\nO seu código OTP é: {otp_code}\n\nUse-o para continuar o login."
     )
-    return msg
+    
+    Thread(target=send_async_email, args=(app, msg)).start()
