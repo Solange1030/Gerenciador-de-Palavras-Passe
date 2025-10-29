@@ -45,39 +45,45 @@ def create_password(data, file, email):
 
         return jsonify({"message": "Registado"}), 200
     except Exception as e:
-        return jsonify({"error": f"Falha ao registar: {str(e)}"}), 401
+        return jsonify({"error": f"Falha ao registar: {str(e)}"}), 400
     
 
 def show_password(service_id, email, code_validate):
     
-    if not code_validate:
-        return jsonify({"message": "Chave de acesso obrigatória"}), 400
+    try:
+        if not code_validate:
+            return jsonify({"message": "Chave de acesso obrigatória"}), 400
 
-    if not checking_secret_key(code_validate, email):
-        return jsonify({"message": "Chave de acesso inválida"}), 403
+        if not checking_secret_key(code_validate, email):
+            return jsonify({"message": "Chave de acesso inválida"}), 403
 
-    password = Password.query.filter((Password.service_id == service_id) & (Password.user_email == email) ).first()
-    service = Service.query.filter_by(id = service_id).first()
-    media = Media.query.filter_by(password_id = password.id).first()
+        password = Password.query.filter((Password.service_id == service_id) & (Password.user_email == email) ).first()
+        service = Service.query.filter_by(id = service_id).first()
+        media = Media.query.filter_by(password_id = password.id).first()
 
-    password_value = crypto.decrypt_value(password.value)
-    if not password:
-        return jsonify({"message": "Palavra-Passe não encontrada"}), 404
+        password_value = crypto.decrypt_value(password.value)
+        if not password:
+            return jsonify({"message": "Palavra-Passe não encontrada"}), 404
 
-    response = [ ]
-    response.append({
-        "password": password_value,
-        "url": service.url,
-        "designation": service.designation,
-        "category": password.category,
-        "description": password.description,
-        "media_path": media.path_file,
-        "email": email
-    })
-    if not password:
-        return jsonify({"message": "Palavra-passe não decifrada"}), 400
+        response_data = {
+            "password": password_value,
+            "url": service.url,
+            "designation": service.designation,
+            "category": password.category,
+            "description": password.description,
+            "media_path": media.path_file,
+            "email": email
+        }
+        
+        if not password:
+            return jsonify({"message": "Palavra-passe não decifrada"}), 400
 
-    return response, 200
+        return jsonify({
+                    "message": "sucesso",
+                    "data": response_data
+                }), 200
+    except Exception as e:
+        return jsonify({"error": f"Ocorreu um erro: {str(e)}"}), 400
 
 
 
