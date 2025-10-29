@@ -52,7 +52,7 @@ def sign_in(data):
         db.session.commit()
        
         try:
-            mail.send(utils.send_email(user.email, user.name, user.otp_code))
+            utils.send_email(user.email, user.name, user.otp_code)
             return jsonify({"message": "OTP gerado e enviado para o email"}), 200
         except Exception as e:
             return jsonify({"error": f"Falha ao enviar o email: {str(e)}"}), 500

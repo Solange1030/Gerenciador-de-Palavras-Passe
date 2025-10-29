@@ -23,5 +23,5 @@ def index(email):
                         "data": result,
                         "status": 200
                     })
-    except e:
+    except Exception as e:
         return jsonify({"error": str(e)}), 500

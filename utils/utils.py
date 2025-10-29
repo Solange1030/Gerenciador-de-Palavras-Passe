@@ -7,7 +7,9 @@ from PIL import Image
 import string
 import random
 from flask_mail import Message
-from app.create_app import app
+from extensions import mail
+import threading
+
 
 #gerar codigo OTP
 def gen_otp():
@@ -57,11 +59,23 @@ def upload_image(file):
         return data
 
     
+def send_async_email(app, msg):
+    with app.app_context():
+        try:
+            mail.send(msg)
+            print(f"Email enviado para {msg.recipients}")
+        except Exception as e:
+            print(f"Erro ao enviar email: {e}")
+
 def send_email(email, name, otp_code):
     msg = Message(
         subject="Seu código OTP",
         recipients=[email],
         body=f"Olá {name},\n\nO seu código OTP é: {otp_code}\n\nUse-o para continuar o login."
     )
-    
-    Thread(target=send_async_email, args=(app, msg)).start()
+
+    app = current_app._get_current_object()
+    thread = threading.Thread(target=send_async_email, args=(app, msg))
+    thread.start()
+
+    return {"message": "Email sendo enviado em segundo plano"}
