@@ -8,7 +8,8 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth_bp.route("/signup", methods=["POST"]) #important
 def sign_up():
-    return auth_controller.sign_up(request)
+    data = request.get_json()
+    return auth_controller.sign_up(data)
 
 @auth_bp.route("/signin", methods=["POST"])   #important
 def sign_in():

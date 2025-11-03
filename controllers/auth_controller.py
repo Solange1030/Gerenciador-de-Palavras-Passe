@@ -29,7 +29,7 @@ def sign_up (data):
         db.session.add(user)
         db.session.commit()
        
-        mail.send(utils.send_email(user.email, user.name, user.otp_code))
+        # mail.send(utils.send_email(user.email, user.name, user.otp_code))
         return jsonify({"message": "Bem vindo/a " + user.name + ". Guarde a sua chave-mestra para acessar a todas as palavras-passe armazenadas. Codigo enviado para o email" }), 200
 
     except Exception  as e:
