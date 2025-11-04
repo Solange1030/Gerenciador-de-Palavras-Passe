@@ -7,40 +7,49 @@ from utils import utils, stegano_utils, crypto
 
 def create_password(data, file, email):
     try:
-    
+        # Verifica se o serviço já existe
         service = Service.query.filter_by(designation=data["designation"]).first()
 
         if not service:
             new_service = create_service(data["designation"], data["url"])
-        
-            if isinstance(new_service, tuple):
-                service = new_service[0]  
-                
-            else:
-                service = new_service
+            service = new_service[0] if isinstance(new_service, tuple) else new_service
 
-        
         if not email:
             return jsonify({"message": "Email não encontrado"}), 404
 
+        # Encripta o valor novo
         value_encrypted = crypto.encrypt_value(data["value"])
 
+        # 🔍 Verifica se já existe alguma senha com o mesmo valor (comparando o conteúdo real)
+        all_passwords = Password.query.filter_by(user_email=email).all()
+
+        for p in all_passwords:
+            try:
+                decrypted_value = crypto.decrypt_value(p.value)
+                if decrypted_value == data["value"]:
+                    return jsonify({"message": "Esta palavra-passe esta repetida."}), 208
+            except Exception:
+                # Caso alguma senha antiga esteja corrompida ou não possa ser desencriptada
+                continue
+
+        # Se chegou aqui, é porque não existe uma senha igual — cria uma nova
         password = Password(
             value=value_encrypted,
             category=data["category"],
             description=data["description"],
             user_email=email,
-            service_id=service.id  
+            service_id=service.id
         )
 
         db.session.add(password)
         db.session.commit()
 
+        # Upload e esteganografia
         data_file = utils.upload_image(file)
         image_path = stegano_utils.embed_pass_in_image(value_encrypted, data_file["path"])
         stego_path = stegano_utils.saving_stegno_file(data_file["name"], data_file["upload_folder"], image_path)
 
-
+        # Registo de media
         media = Media(
             _type_="Imagem",
             file_name=data_file["name"],
@@ -51,10 +60,11 @@ def create_password(data, file, email):
         db.session.add(media)
         db.session.commit()
 
-        return jsonify({"message": "Registado"}), 200
+        return jsonify({"message": "Senha registada com sucesso."}), 200
 
     except Exception as e:
         return jsonify({"error": f"Falha ao registar: {str(e)}"}), 400
+
     
 
 def show_password(service_id, email, code_validate):
