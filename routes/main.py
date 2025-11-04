@@ -11,4 +11,5 @@ main_bp = Blueprint("main", __name__, url_prefix="/")
 @main_bp.route("/dashboard", methods=["GET"])
 @token_required
 def dashboard(email):
-    return main_controller.index(email)
+   
+    return main_controller.list_dash(email)

@@ -7,7 +7,7 @@ from utils import utils, stegano_utils, crypto
 
 def create_password(data, file, email):
     try:
-        # Verifica se o serviço já existe
+    
         service = Service.query.filter_by(designation=data["designation"]).first()
 
         if not service:
@@ -17,22 +17,20 @@ def create_password(data, file, email):
         if not email:
             return jsonify({"message": "Email não encontrado"}), 404
 
-        # Encripta o valor novo
         value_encrypted = crypto.encrypt_value(data["value"])
 
-        # 🔍 Verifica se já existe alguma senha com o mesmo valor (comparando o conteúdo real)
+        exists = False
         all_passwords = Password.query.filter_by(user_email=email).all()
 
         for p in all_passwords:
             try:
                 decrypted_value = crypto.decrypt_value(p.value)
                 if decrypted_value == data["value"]:
-                    return jsonify({"message": "Esta palavra-passe esta repetida."}), 208
+                    exists = True
+                    break
             except Exception:
-                # Caso alguma senha antiga esteja corrompida ou não possa ser desencriptada
-                continue
+                continue  
 
-        # Se chegou aqui, é porque não existe uma senha igual — cria uma nova
         password = Password(
             value=value_encrypted,
             category=data["category"],
@@ -44,12 +42,10 @@ def create_password(data, file, email):
         db.session.add(password)
         db.session.commit()
 
-        # Upload e esteganografia
         data_file = utils.upload_image(file)
         image_path = stegano_utils.embed_pass_in_image(value_encrypted, data_file["path"])
         stego_path = stegano_utils.saving_stegno_file(data_file["name"], data_file["upload_folder"], image_path)
 
-        # Registo de media
         media = Media(
             _type_="Imagem",
             file_name=data_file["name"],
@@ -60,7 +56,10 @@ def create_password(data, file, email):
         db.session.add(media)
         db.session.commit()
 
-        return jsonify({"message": "Senha registada com sucesso."}), 200
+        if exists:
+            return jsonify({"message": "Palavra-passe registada com sucesso (já existia uma igual armazenada)."}), 208
+        else:
+            return jsonify({"message": "Palavra-passe registada com sucesso."}), 200
 
     except Exception as e:
         return jsonify({"error": f"Falha ao registar: {str(e)}"}), 400
@@ -103,26 +102,6 @@ def show_password(service_id, email, code_validate):
                 }), 200
     except Exception as e:
         return jsonify({"error": f"Ocorreu um erro: {str(e)}"}), 400
-
-
-
-# def patch_password(email, password_id, data):
-    
-#     password = Password.query.filter_by(id=password_id, user_email=email).first()
-
-#     if not password:
-#         return jsonify({"message": "Senha não encontrada"}), 404
-
-#     # Atualiza apenas o que foi enviado
-#     if "category" in data:
-#         password.category = data["category"]
-#     if "description" in data:
-#         password.description = data["description"]
-#     if "value" in data:
-#         password.value = crypto.encrypt_value(data["value"])
-
-#     db.session.commit()
-#     return jsonify({"message": "Senha atualizada parcialmente com sucesso"})
 
 
 def checking_secret_key(code_validate, email):

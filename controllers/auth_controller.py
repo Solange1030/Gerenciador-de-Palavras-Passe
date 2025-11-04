@@ -29,7 +29,7 @@ def sign_up (data):
         db.session.add(user)
         db.session.commit()
        
-        mail.send(utils.send_email(user.email, user.name, user.otp_code))
+        # mail.send(utils.send_email(user.email, user.name, user.otp_code))
         return jsonify({"message": "Bem vindo/a " + user.name + ". Guarde a sua chave-mestra para acessar a todas as palavras-passe armazenadas. Codigo enviado para o email" }), 200
 
     except Exception  as e:
@@ -41,23 +41,22 @@ def sign_in(data):
     try:
         valid = validate_email(data["email"])
         data["email"] = valid.email
+        user = User.query.filter_by(email = data["email"]).first()
 
-    except EmailNotValidError as e:
+        if user:
+            user.otp_code = utils.gen_otp()
+            db.session.commit()
+        
+            return jsonify({"message": "OTP gerado e enviado para o email", "otp": user.otp_code}), 200
+            # try:
+            #     mail.send(utils.send_email(user.email, user.name, user.otp_code))
+            #     return jsonify({"message": "OTP gerado e enviado para o email"}), 200
+            # except Exception as e:
+            #     return jsonify({"error": f"Falha ao enviar o email: {str(e)}"}), 500
+        else:
+            return jsonify({"message": "Email não encontrado"}), 404 
+    except Exception as e:
         return jsonify({"error": str(e)}), 400
-    
-    user = User.query.filter_by(email = data["email"]).first()
-
-    if user:
-        user.otp_code = utils.gen_otp()
-        db.session.commit()
-       
-        try:
-            utils.send_email(user.email, user.name, user.otp_code)
-            return jsonify({"message": "OTP gerado e enviado para o email"}), 200
-        except Exception as e:
-            return jsonify({"error": f"Falha ao enviar o email: {str(e)}"}), 500
-    else:
-        return jsonify({"message": "Email não encontrado"}), 404 
 
 
 def otp_varificate(otp_data):

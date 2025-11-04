@@ -1,14 +1,14 @@
 from flask import Blueprint, request
-from controllers import password_controller
+from controllers import password_controller, main_controller
 from utils.token_utils import token_required
 
 password_bp = Blueprint("password", __name__, url_prefix="/passwords")
 
 
 @password_bp.route("/", methods=["GET"])
-#@token_required
-def fetch_all():
-    return "Hello world"
+@token_required
+def fetch_all(email):
+    return main_controller.index(email)
 
 @password_bp.route("/<int:service_id>", methods=["POST"])   #important
 @token_required

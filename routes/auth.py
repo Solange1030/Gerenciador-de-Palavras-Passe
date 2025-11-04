@@ -8,7 +8,8 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth_bp.route("/signup", methods=["POST"]) #important
 def sign_up():
-    return auth_controller.sign_up(request)
+    data = request.get_json()
+    return auth_controller.sign_up(data)
 
 @auth_bp.route("/signin", methods=["POST"])   #important
 def sign_in():
@@ -27,8 +28,11 @@ def check_otp():
 @auth_bp.route("/user_data", methods=["GET"])
 @token_required
 def get_user_data(email):
-    user = User.query.filter_by(email=email).first()
-    return jsonify({"email": user.email, "id": user.id})
+    try:
+        user = User.query.filter_by(email=email).first()
+        return jsonify({"data":{ "email": user.email, "id": user.id}}), 200
+    except Exception as e:
+        return jsonify({"error": f"{str(e)}"})
 
 @auth_bp.route("/signout", methods=["POST"])   #important
 def sign_out():
